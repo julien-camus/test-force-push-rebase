@@ -18,7 +18,9 @@ def get_user(user_id: str):
 @app.route("/users", methods=["POST"])
 def create_user():
     payload = request.get_json()
-    user_id = payload["id"]
+    user_id = payload.get("id") if isinstance(payload, dict) else None
+    if not isinstance(user_id, str) or not user_id.strip():
+        return jsonify({"error": "id is required and must be a non-empty string"}), 400
     USERS[user_id] = payload
     return jsonify(payload), 201
 
